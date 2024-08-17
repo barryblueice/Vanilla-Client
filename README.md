@@ -96,7 +96,11 @@ python main.py
 |Action|实现情况|备注|
 |:-:|:-:|:-:|
 |send_message|✔️/⭕|群聊/个人消息均支持。</br>目前仅支持发送图片和文本，文件发送仍在测试阶段，表情发送后续会支持。|
+<<<<<<< HEAD
 |delete_message|❌|因上游端问题无法实现|
+=======
+|delete_message|❌||
+>>>>>>> 215eb8eb39f29db17394aad5621b25de5a2db352
 
 **文件Action：**
 |Action|实现情况|备注|
