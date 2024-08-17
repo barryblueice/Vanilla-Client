@@ -1,3 +1,5 @@
+![Vanilla-Client](https://github.com/user-attachments/assets/e2253646-6f19-4dda-bae5-aefb635f21f6)
+
 <p align="center">
     <a href="https://onebot.dev/"><img src="https://img.shields.io/badge/OneBot-12-black?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABwCAMAAADxPgR5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAxQTFRF////29vbr6+vAAAAk1hCcwAAAAR0Uk5T////AEAqqfQAAAKcSURBVHja7NrbctswDATQXfD//zlpO7FlmwAWIOnOtNaTM5JwDMa8E+PNFz7g3waJ24fviyDPgfhz8fHP39cBcBL9KoJbQUxjA2iYqHL3FAnvzhL4GtVNUcoSZe6eSHizBcK5LL7dBr2AUZlev1ARRHCljzRALIEog6H3U6bCIyqIZdAT0eBuJYaGiJaHSjmkYIZd+qSGWAQnIaz2OArVnX6vrItQvbhZJtVGB5qX9wKqCMkb9W7aexfCO/rwQRBzsDIsYx4AOz0nhAtWu7bqkEQBO0Pr+Ftjt5fFCUEbm0Sbgdu8WSgJ5NgH2iu46R/o1UcBXJsFusWF/QUaz3RwJMEgngfaGGdSxJkE/Yg4lOBryBiMwvAhZrVMUUvwqU7F05b5WLaUIN4M4hRocQQRnEedgsn7TZB3UCpRrIJwQfqvGwsg18EnI2uSVNC8t+0QmMXogvbPg/xk+Mnw/6kW/rraUlvqgmFreAA09xW5t0AFlHrQZ3CsgvZm0FbHNKyBmheBKIF2cCA8A600aHPmFtRB1XvMsJAiza7LpPog0UJwccKdzw8rdf8MyN2ePYF896LC5hTzdZqxb6VNXInaupARLDNBWgI8spq4T0Qb5H4vWfPmHo8OyB1ito+AysNNz0oglj1U955sjUN9d41LnrX2D/u7eRwxyOaOpfyevCWbTgDEoilsOnu7zsKhjRCsnD/QzhdkYLBLXjiK4f3UWmcx2M7PO21CKVTH84638NTplt6JIQH0ZwCNuiWAfvuLhdrcOYPVO9eW3A67l7hZtgaY9GZo9AFc6cryjoeFBIWeU+npnk/nLE0OxCHL1eQsc1IciehjpJv5mqCsjeopaH6r15/MrxNnVhu7tmcslay2gO2Z1QfcfX0JMACG41/u0RrI9QAAAABJRU5ErkJggg==" alt="onebot12"></a>
     <a href="https://github.com/barryblueice/Vanilla-Client/blob/main/LICENSE"><img src="https://img.shields.io/github/license/barryblueice/Vanilla-Client" alt="License"></a>
@@ -29,6 +31,8 @@ Vanilla Client目前支持的微信版本为`3.9.8.25`，[可点击此处下载�
 
 也可进入[QQ交流群](https://qm.qq.com/q/t3jI6juvoQ)提交issue/获取最新进展。
 
+![qrcode_1723876424285](https://github.com/user-attachments/assets/e6190d3d-9f2e-43a1-8641-d7462ce53304)
+
 ## 如何运行：
 
 使用以下命令运行：
@@ -50,7 +54,7 @@ python main.py
 |Event|实现情况|备注
 |:-:|:-:|:-:|
 |meta.connect|✔️||
-|meta.heartbeat|⭕|后续更新|
+|meta.heartbeat|⭕|后续可能更新|
 |meta.status_update|✔️||
 
 **Message事件：**
