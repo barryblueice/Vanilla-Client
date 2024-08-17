@@ -11,9 +11,9 @@
 
 ## 上游依赖
 
-[wxhelper](https://github.com/ttttupup/wxhelper)：Hook WeChat / 微信逆向
+[wxhelper](https://github.com/ttttupup/wxhelper)：Hook WeChat / 微信逆向。
 
-部分扩展API参考自[ComWeChatBotClient](https://github.com/JustUndertaker/ComWeChatBotClient)
+部分扩展API参考自[ComWeChatBotClient](https://github.com/JustUndertaker/ComWeChatBotClient)。
 
 ## 许可证
 
@@ -21,7 +21,7 @@
 
 ## 关于支持：
 
-Vanilla Client目前支持的微信版本为`3.9.8.25`，[可点击此处下载。](https://github.com/tom-snow/wechat-windows-versions/releases/download/v3.9.8.25/WeChatSetup-3.9.8.25.exe)
+Vanilla Client目前支持的微信版本为`3.9.8.25`，[可点击此处下载](https://github.com/tom-snow/wechat-windows-versions/releases/download/v3.9.8.25/WeChatSetup-3.9.8.25.exe)。
 
 由于Vanilla Client的上游依赖[wxhelper](https://github.com/ttttupup/wxhelper)通过逆向微信得到的接口，故Vanilla Client仅支持`Windows`平台。
 
@@ -133,7 +133,7 @@ python main.py
 |Event|实现情况|备注|
 |:-:|:-:|:-:|
 |notice.get_private_poke|✔️|参考自[ComWeChatBotClient](https://justundertaker.github.io/ComWeChatBotClient/event/notice.html)，用法相同。|
-|notice.wx.get_group_poke|✔️|参考自(ComWeChatBotClient)[https://justundertaker.github.io/ComWeChatBotClient/event/notice.html]，用法相同。|
+|notice.wx.get_group_poke|✔️|参考自[ComWeChatBotClient](https://justundertaker.github.io/ComWeChatBotClient/event/notice.html)，用法相同。|
 
 ## 其他实现情况
 
