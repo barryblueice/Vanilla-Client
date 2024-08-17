@@ -1,0 +1,1 @@
+.\ConsoleApplication.exe -i WeChat.exe -p C:\WeChat\wxhelper.dll

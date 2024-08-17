@@ -1,0 +1,14 @@
+.env
+*.json
+config.ini
+dll/config.ini
+*.code-workspace
+
+logs/
+data/
+__pycache__/
+
+initialization/__pycache__/
+
+connection/ws_reversed/api/__pycache__/
+connection/ws_reversed/event/__pycache__/
