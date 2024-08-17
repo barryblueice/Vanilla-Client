@@ -90,6 +90,12 @@ python main.py
 |get_user_info|✔️|由于上游端限制，bot在群聊中会通过监听消息的方式收集群成员的wxid和username并保存为json。</br>在私聊事件中，若被触发wxid不存在于json文件，则username默认返回wxid。</br>你可以通过修改json文件的方式进行username的自定义。</br>通过数据库解包方式进行用户Action的实现暂不考虑支持。|
 |get_friend_list|⭕|后续可能更新|
 
+**Message Action:**
+|Action|实现情况|备注|
+|:-:|:-:|:-:|
+|send_message|✔️/⭕|群聊/个人消息均支持。</br>目前仅支持发送图片和文本，文件发送仍在测试阶段，表情发送后续会支持。|
+|delete_message|❌||
+
 **文件Action：**
 |Action|实现情况|备注|
 |:-:|:-:|:-:|
