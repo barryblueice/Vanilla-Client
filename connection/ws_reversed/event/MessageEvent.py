@@ -23,27 +23,11 @@ class MessageEvent:
         msgtime: int,
         msgId: str,
         isat: bool,
-        otherat: bool
+        otherat: bool,
+        _other_at_wx_id: str
         ):
         
-        if isat == True:
-            message = [
-                {
-                    "type": "mention",
-                    "data": {
-                        "user_id": self_id
-                    }
-                },
-                {
-                    "type": "text",
-                    "data" : {
-                        "text" : message
-                    }
-                }
-            ]
-            
-        else:
-            message = [
+        message = [
                     {
                         "type": "text",
                         "data": {
@@ -51,6 +35,27 @@ class MessageEvent:
                         }
                     }
                     ]
+        
+        if isat == True:
+            message.append(
+                {
+                    "type": "mention",
+                    "data": {
+                        "user_id": self_id
+                    }
+                }
+            )
+            
+        if otherat == True:
+            
+            message.append(
+                {
+                    "type": "mention",
+                    "data": {
+                        "user_id": _other_at_wx_id
+                    }
+                }
+            )
         
         try:
             data = json.dumps({

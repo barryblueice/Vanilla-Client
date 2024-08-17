@@ -6,7 +6,7 @@ import requests
 today = (datetime.today()).strftime("%Y-%m-%d")
 logger.add(f"{os.path.join(os.getcwd(),'logs',today)}.log")
 
-def welcome_info() -> list:
+def GetSelfInfo() -> list:
     hookport = os.getenv("PORT")
     connect_url = os.getenv('connect_url')
     url = f"http://{connect_url}:{hookport}/api/userInfo"

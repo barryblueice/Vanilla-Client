@@ -12,6 +12,7 @@ import base64
 from .MessageAction import MessageAction
 from .UserAction import UserAction
 from .FileAction import FileAction
+from initialization.lstep import GetSelfInfo as GetSelfInfoApi
 
 today = (datetime.today()).strftime("%Y-%m-%d")
 logger.add(f"{os.path.join(os.getcwd(),'logs',today)}.log")
@@ -222,6 +223,14 @@ class ActionHandle:
                     data=data,
                     echo=echo
                 )
+            
+            case "get_self_info":
+                
+                echo = msg["echo"]
+                await self.GetSelfInfoAction(
+                    echo=echo
+                )
+                
             case _:
                 echo = msg["echo"]
                 await self.UnsupportedMessageAction(
@@ -286,6 +295,7 @@ class ActionHandle:
             _at_user_id: str,
             mention_all: bool
         ):
+        logger.info(f"向群聊 {group_id} 发送消息: {message}")
         headers = {
             'Content-Type': 'application/json'
         }
@@ -546,7 +556,7 @@ class ActionHandle:
             message,
             echo
         )
-
+    
     async def UploadFileAction(
         self,
         _type: str,
@@ -604,6 +614,36 @@ class ActionHandle:
             retcode=retcode
         )
     
+    async def GetSelfInfoAction(
+                self,
+                echo: str
+        ):
+        try:
+            
+            self_information = GetSelfInfoApi()
+            self_name = self_information[0]
+            self_id = self_information[1]
+            status = 'ok'
+            retcode = 0
+            message = ''
+            
+        except Exception as e:
+            
+            self_id = '0',
+            self_name = '0'
+            status = 'failed'
+            retcode = 10001
+            message = f"Error: {e}"
+        
+        await UserAction.GetSelfInfo(
+            status=status,
+            retcode=retcode,
+            self_id=self_id,
+            self_name=self_name,
+            message=message,
+            echo=echo
+            )
+        
     async def UnsupportedMessageAction(
             self,
             echo: str

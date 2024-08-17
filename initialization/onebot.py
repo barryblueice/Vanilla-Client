@@ -1,6 +1,7 @@
 import os,sys,time,threading
 from datetime import datetime
 from loguru import logger
+import asyncio
 from .websocket_reverse_server import OneBotWebSocketReverseServer
 
 def onebot_v12_websocket_reverse():
@@ -19,13 +20,13 @@ def onebot_v12_websocket_reverse():
     client = OneBotWebSocketReverseServer(onebot_url, onebot_port)
     thread = threading.Thread(target=client.run)
     thread.start()
-    start_hookmsg_server(hookmsgport)
+    asyncio.run(start_hookmsg_server(hookmsgport))
     # return thread
         
-def start_hookmsg_server(hookmsgport):
+async def start_hookmsg_server(hookmsgport):
     from .hookmsg_server import HookMsgSocketServerManager
     server_manager = HookMsgSocketServerManager(port=int(hookmsgport))
-    server_manager.start_server()
+    await server_manager.start_server()
 
 hookport = os.getenv("PORT")
 hookmsgport = os.getenv("HOOK_PORT")

@@ -20,8 +20,8 @@ class UserAction:
     async def GetSelfInfo(
         status: str,
         retcode: int,
-        user_id: str,
-        user_name: str,
+        self_id: str,
+        self_name: str,
         message: str,
         echo: str
         ):
@@ -31,8 +31,8 @@ class UserAction:
                 "status": status,
                 "retcode": retcode,
                 "data": {
-                    "user_id": user_id,
-                    "user_name": user_name,
+                    "user_id": self_id,
+                    "user_name": self_name,
                 },
                 "message": message,
                 "echo": echo

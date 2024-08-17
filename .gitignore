@@ -1,5 +1,6 @@
 .env
 *.json
+*.xml
 config.ini
 dll/config.ini
 *.code-workspace
