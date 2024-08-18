@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "vanilla-client-poetry"
+version = "0.1.0"
+description = "Another Onebot V12 Adapter For Wechat"
+authors = ["barryblueice <barryblueice@outlook.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+art = "^6.2"
+loguru = "^0.7.2"
+ujson = "^5.10.0"
+python-dotenv = "^1.0.1"
+numpy = "^2.0.1"
+websockets = "^12.0"
+wmi = "^1.5.1"
+requests = "^2.32.3"
+asyncio = "^3.4.3"
+
+
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+priority = "primary"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
