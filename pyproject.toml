@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Another Onebot V12 Adapter For Wechat"
 authors = ["barryblueice <barryblueice@outlook.com>"]
 readme = "README.md"
+<<<<<<< HEAD
 package-mode = false
+=======
+>>>>>>> 0cb3ff764460162adc226e0d00899b894f5321bf
 
 [tool.poetry.dependencies]
 python = "^3.10"
