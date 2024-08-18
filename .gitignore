@@ -1,6 +1,6 @@
 .gitignore
 
-.env
+.env*
 *.json
 *.xml
 config.ini

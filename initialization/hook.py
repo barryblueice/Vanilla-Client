@@ -70,8 +70,8 @@ def hook_initial(target_wx_version,hookport):
             payload = {}
             headers = {}
             requests.request("POST", url, headers=headers, data=payload)
-        except:
-            logger.warning("Hook作业失败，请手动运行当前目录下dll文件夹中的dll-inject.bat以进行手动注入！")
+        except Exception as e:
+            logger.warning(f"Hook作业失败：{e}，请手动运行当前目录下dll文件夹中的dll-inject.bat以进行手动注入！")
 
         while True:
             try:

@@ -25,7 +25,7 @@ class EventHandle:
         pass
     
     async def EventHandle(self,msg,client):
-        print(msg)
+        # print(msg)
         self_information = GetSelfInfo()
         self_name = self_information[0]
         self_id = self_information[1]
