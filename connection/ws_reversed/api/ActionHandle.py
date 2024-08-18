@@ -87,7 +87,7 @@ class ActionHandle:
         user_id: str
         ) -> str:
         try:
-            conn = sqlite3.connect('.\\member.db')
+            conn = sqlite3.connect(MemberDB)
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT *
@@ -99,7 +99,7 @@ class ActionHandle:
             if row:
                 return str(row[1])
             else:
-                raise ValueError('Username Not Found')
+                raise ValueError('Userid Not Found')
         finally:
             conn.close()
     
