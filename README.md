@@ -34,7 +34,7 @@ Vanilla Client目前支持的微信版本为`3.9.8.25`，[可点击此处下载]
 也可进入[QQ交流群](https://qm.qq.com/q/t3jI6juvoQ)提交issue/获取最新进展。
 
 <p align="center">
-    <img src=https://github.com/user-attachments/assets/e6190d3d-9f2e-43a1-8641-d7462ce53304 align="left" width=400 /></img>
+    <img src=https://github.com/user-attachments/assets/e6190d3d-9f2e-43a1-8641-d7462ce53304 width=400 /></img>
 </p>
 
 ## 如何运行：

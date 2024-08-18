@@ -66,7 +66,7 @@ def hook_initial(target_wx_version,hookport):
         logger.info("Hook作业完成，正在检测Hook是否生效……")
 
         try:
-            url = f"http://{connect_url}:{hookport}/api/?type=0"
+            url = f"http://{connect_url}:{hookport}/api/userInfo"
             payload = {}
             headers = {}
             requests.request("POST", url, headers=headers, data=payload)
@@ -75,7 +75,7 @@ def hook_initial(target_wx_version,hookport):
 
         while True:
             try:
-                url = f"http://{connect_url}:{hookport}/api/?type=0"
+                url = f"http://{connect_url}:{hookport}/api/userInfo"
                 payload = {}
                 headers = {}
                 requests.request("POST", url, headers=headers, data=payload)
