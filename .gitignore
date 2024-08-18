@@ -1,6 +1,7 @@
 .gitignore
 
 .env*
+*.bat
 *.json
 *.xml
 config.ini

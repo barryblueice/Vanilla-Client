@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "vanilla-client-poetry"
-version = "0.1.0"
+name = "vanilla-client"
+version = "1.2.1"
 description = "Another Onebot V12 Adapter For Wechat"
 authors = ["barryblueice <barryblueice@outlook.com>"]
 readme = "README.md"

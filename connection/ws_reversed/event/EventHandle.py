@@ -1,6 +1,7 @@
 import json
 import threading
 import socketserver
+import sqlite3
 from loguru import logger
 from datetime import datetime
 import os
@@ -18,11 +19,75 @@ onebot_url = str(os.getenv("onebot_ip"))
 onebot_port = str(os.getenv("onebot_port"))
 loop = asyncio.get_event_loop()
 data_path = str(os.getenv("data_path"))
-member_path = os.path.join(data_path,'member.json')
+datapath = os.path.join(str(os.getenv("data_path")))
+MemberDB = os.path.join(datapath,'member.db')
+GroupDB = os.path.join(datapath,'group.db')
+# member_path = os.path.join(data_path,'member.json')
 
 class EventHandle:
     def __init__(self):
         pass
+    
+    async def member_update(
+        self,
+        user_id: str,
+        user_name: str
+        ):
+        conn = sqlite3.connect(MemberDB)
+        try:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE Users
+                SET username = ?
+                WHERE userid = ?;
+            """, (user_name, user_id))
+            conn.commit()
+        finally:
+            conn.close()
+            
+    async def member_find_by_user_name(
+        self,
+        user_name: str
+    ) -> str:
+        try:
+            conn = sqlite3.connect(MemberDB)
+            cursor = conn.cursor()
+
+            # 执行 SELECT 语句
+            cursor.execute("""
+                SELECT userid
+                FROM Users
+                WHERE username = ?;
+            """, (user_name,))
+            row = cursor.fetchone()
+
+            if row:
+                return str(row[0])
+            else:
+                raise ValueError('Username Not Found')
+        finally:
+            conn.close()
+    
+    async def member_find_by_user_id(
+        self,
+        user_id: str
+        ) -> str:
+        try:
+            conn = sqlite3.connect('.\\member.db')
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT *
+                FROM Users
+                WHERE userid = ?;
+            """, (user_id,))
+            row = cursor.fetchone()
+
+            if row:
+                return str(row[1])
+            else:
+                raise ValueError('Username Not Found')
+        finally:
+            conn.close()
     
     async def EventHandle(self,msg,client):
         # print(msg)
@@ -82,13 +147,18 @@ class EventHandle:
         message = str(msg['content'])[(str(msg['content']).find(':\n'))+2:]
         user_name = str(msg['displayFullContent'])[:(str(msg['displayFullContent']).find(' :'))]
         
-        with open(member_path,'r',encoding='utf-8') as f:
-            member_list = json.load(f)
+        # with open(member_path,'r',encoding='utf-8') as f:
+        #     member_list = json.load(f)
             
-        member_list.update({user_id:user_name})
+        # member_list.update({user_id:user_name})
         
-        with open(member_path,'w') as f:
-            json.dump(member_list,f,indent=4,ensure_ascii=True)
+        # with open(member_path,'w') as f:
+        #     json.dump(member_list,f,indent=4,ensure_ascii=True)
+        
+        await self.member_update(
+            user_id = user_id,
+            user_name = user_name
+        )
         
         if raw_message.endswith("在群聊中@了你"):
             _at_status = True
@@ -100,14 +170,21 @@ class EventHandle:
             
             at_content = match.group(0)
             
-            with open (member_path,'r',encoding='utf-8') as f:
-                member_list = json.load(f)
+            # with open (member_path,'r',encoding='utf-8') as f:
+            #     member_list = json.load(f)
                 
-            for i in member_list:
-                if at_content == member_list[i]:
-                    _other_at_status = True
-                    _other_at_wx_id = 'i'
-                    break
+            # for i in member_list:
+            #     if at_content == member_list[i]:
+            #         _other_at_status = True
+            #         _other_at_wx_id = 'i'
+            #         break
+            
+            try:
+                at_result = await self.member_find_by_user_name(user_name=at_content)
+                _other_at_status = True
+                _other_at_wx_id = at_result
+            except:
+                _other_at_wx_id = 'i'
         
         logger.info(f'{user_id} 在群聊 {group_id} 中发送了一条消息：{message}')
         await MessageEvent.GroupMessageEvent(
@@ -133,15 +210,10 @@ class EventHandle:
         logger.info(f'{user_id} 给你发送了一条私聊消息：{message}')
         user_name = str(user_id)
         
-        with open(member_path,'r',encoding='utf-8') as f:
-            member_list = json.load(f)
-            
-        if user_id not in member_list:
-            
-            member_list.update({user_id:user_name})
-            
-            with open(member_path,'w') as f:
-                json.dump(member_list,f,indent=4,ensure_ascii=True)
+        await self.member_update(
+            user_id = user_id,
+            user_name = user_name
+        )
             
         await MessageEvent.PrivateMessageEvent(
             client=client,

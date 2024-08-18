@@ -15,4 +15,5 @@ def GetSelfInfo() -> list:
     response = requests.request("POST", url, headers=headers, data=payload).json()
     # logger.success(f"欢迎回来！用户：{response['data']['name']}，wxid：{response['data']['wxid']}")
     # print (response['data']['dbKey'])
+    # print (response)
     return [response['data']['name'],response['data']['wxid']]

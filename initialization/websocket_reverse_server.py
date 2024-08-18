@@ -7,6 +7,7 @@ import ujson as json
 from connection.ws_reversed.api.ActionHandle import ActionHandle
 from .lstep import GetSelfInfo
 from connection.ws_reversed.event import MetaEvent
+from .DataBaseDecrypted import DataBaseDecryptedProcess
 
 class OneBotWebSocketReverseServer:
     today = (datetime.today()).strftime("%Y-%m-%d")
@@ -27,6 +28,7 @@ class OneBotWebSocketReverseServer:
                     logger.success(f'已连接到反向服务器: {self.uri}')
                     self_information = GetSelfInfo()
                     logger.success(f"欢迎回来！用户：{self_information[0]}，wxid：{self_information[1]}")
+                    DataBaseDecryptedProcess(self_information[1])
                     await MetaEvent.MetaEvent.connect(self)
                     await MetaEvent.MetaEvent.status_update(self, self_information[1])
                     consumer_task = asyncio.create_task(self.listen(websocket))
@@ -53,11 +55,12 @@ class OneBotWebSocketReverseServer:
 
     async def handle_message(self, message):
         async with self.semaphore:
+            # print (message)
             await self.process_message(message)
 
     async def process_message(self, message):
         try:
-            message = json.loads(message)
+            message = json.loads(str(message))
             action_handle = ActionHandle()
             await action_handle.MessageActionHandle(message)
         except Exception as e:
@@ -67,6 +70,7 @@ class OneBotWebSocketReverseServer:
         while True:
             try:
                 message = self.message_queue.get_nowait()
+                # print(message)
                 if self.websocket:
                     try:
                         await self.websocket.send(message)

@@ -12,6 +12,7 @@ import base64
 from .MessageAction import MessageAction
 from .UserAction import UserAction
 from .FileAction import FileAction
+import sqlite3
 from initialization.lstep import GetSelfInfo as GetSelfInfoApi
 
 today = (datetime.today()).strftime("%Y-%m-%d")
@@ -19,7 +20,8 @@ logger.add(f"{os.path.join(os.getcwd(),'logs',today)}.log")
 onebot_url = str(os.getenv("onebot_ip"))
 onebot_port = str(os.getenv("onebot_port"))
 data_path = str(os.getenv("data_path"))
-member_path = os.path.join(data_path,'member.json')
+MemberDB = os.path.join(data_path,'member.db')
+GroupDB = os.path.join(data_path,'group.db')
 
 img_path = os.path.join(data_path,'image')
 audio_path = os.path.join(data_path,'audio')
@@ -39,6 +41,67 @@ class ActionHandle:
         self.PORT = os.getenv('PORT')
         self.connect_url = os.getenv('connect_url')
         self.ActionUrl = f'http://{self.connect_url}:{self.PORT}'
+        
+    async def member_update(
+        self,
+        user_id: str,
+        user_name: str
+        ):
+        conn = sqlite3.connect(MemberDB)
+        try:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE Users
+                SET username = ?
+                WHERE userid = ?;
+            """, (user_name, user_id))
+            conn.commit()
+        finally:
+            conn.close()
+            
+    async def member_find_by_user_name(
+        self,
+        user_name: str
+    ) -> str:
+        try:
+            conn = sqlite3.connect(MemberDB)
+            cursor = conn.cursor()
+
+            # 执行 SELECT 语句
+            cursor.execute("""
+                SELECT userid
+                FROM Users
+                WHERE username = ?;
+            """, (user_name,))
+            row = cursor.fetchone()
+
+            if row:
+                return str(row[0])
+            else:
+                raise ValueError('Username Not Found')
+        finally:
+            conn.close()
+    
+    async def member_find_by_user_id(
+        self,
+        user_id: str
+        ) -> str:
+        try:
+            conn = sqlite3.connect('.\\member.db')
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT *
+                FROM Users
+                WHERE userid = ?;
+            """, (user_id,))
+            row = cursor.fetchone()
+
+            if row:
+                return str(row[1])
+            else:
+                raise ValueError('Username Not Found')
+        finally:
+            conn.close()
     
     async def MessageActionHandle(self,msg):
             
@@ -52,22 +115,26 @@ class ActionHandle:
                     MsgImageList = []
                     MsgFileList = []
                     echo = msg["echo"]
-                    for i in list(msg["params"]["message"]):
-                        match i["type"]:
-                            case "mention":
-                                if i['data']['user_id'] == user_id:
-                                    at_sender = True
-                                else:
-                                    _at = True
-                                    _at_user_id = i['data']['user_id']
-                            case "mention_all":
-                                mention_all = True
-                            case "text":
-                                MsgTextList += i['data']['text']
-                            case "image":
-                                MsgImageList.append(i['data']['file_id'])
-                            case _:
-                                MsgImageList.append(i['data']['file_id'])
+                    
+                    try:
+                        for i in list(msg["params"]["message"]):
+                            match i["type"]:
+                                case "mention":
+                                    if i['data']['user_id'] == user_id:
+                                        at_sender = True
+                                    else:
+                                        _at = True
+                                        _at_user_id = i['data']['user_id']
+                                case "mention_all":
+                                    mention_all = True
+                                case "text":
+                                    MsgTextList += i['data']['text']
+                                case "image":
+                                    MsgImageList.append(i['data']['file_id'])
+                                case _:
+                                    MsgImageList.append(i['data']['file_id'])
+                    except:
+                        MsgTextList += msg["params"]["message"]
                     
                     await self.PrivateTextAction(
                         user_id,
@@ -350,6 +417,7 @@ class ActionHandle:
             img: str,
             echo: str,
         ):
+        logger.info(f"向好友 {user_id} 发送私聊图片消息")
         headers = {
             'Content-Type': 'application/json'
         }
@@ -396,6 +464,7 @@ class ActionHandle:
             img: str,
             echo: str,
         ):
+        logger.info(f"向群聊 {group_id} 发送图片消息")
         headers = {
             'Content-Type': 'application/json'
         }
@@ -442,6 +511,7 @@ class ActionHandle:
             file: str,
             echo: str,
         ):
+        logger.info(f"向群聊 {user_id} 发送文件消息")
         headers = {
             'Content-Type': 'application/json'
         }
@@ -488,6 +558,7 @@ class ActionHandle:
             file: str,
             echo: str,
         ):
+        logger.info(f"向群聊 {group_id} 发送文件消息")
         headers = {
             'Content-Type': 'application/json'
         }
@@ -533,10 +604,12 @@ class ActionHandle:
             user_id: str,
             echo: str
     ):
+        logger.info(f"事件触发: GetUserInfoAction({user_id})")
         try:
-            with open(member_path,'r',encoding='utf-8') as f:
-                member_list = json.load(f)
-            user_name = member_list[user_id]
+            try:
+                await self.member_find_by_user_id(user_id=user_id)
+            except:
+                user_name = user_id
             status = 'ok'
             retcode = 0
             message = ""
@@ -566,7 +639,7 @@ class ActionHandle:
         data: str,
         echo: str
     ):
-        
+        logger.info(f"事件触发: UploadFileAction")  
         message = ""
         echo = echo
         file_id = str(uuid.uuid4())
@@ -596,7 +669,7 @@ class ActionHandle:
                 if type(data) != bytes:
                     data = base64.b64decode(data)
                 with open(os.path.join(img_path,f"{file_id}.png"),'wb') as file_obj:
-                    file_obj.write(response.content)
+                    file_obj.write(data)
             case _:
                 raise ValueError("Type Not Supported")
         status = 'ok'
@@ -619,7 +692,7 @@ class ActionHandle:
                 echo: str
         ):
         try:
-            
+            logger.info(f"事件触发: GetSelfInfoAction")  
             self_information = GetSelfInfoApi()
             self_name = self_information[0]
             self_id = self_information[1]
@@ -648,6 +721,7 @@ class ActionHandle:
             self,
             echo: str
     ):
+        logger.info(f"事件触发: UnsupportedMessageAction，不支持的Action")  
         await MessageAction.UnsupportedMessageAction(
             echo
         )
