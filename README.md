@@ -39,10 +39,13 @@ Vanilla Client目前支持的微信版本为`3.9.8.25`，[可点击此处下载]
 
 ## 如何运行：
 
-使用以下命令运行：
+由于使用了poetry进行虚拟环境管理，故使用以下命令运行：
 
 ```python
-python main.py
+poetry install
+# poetry install --no-root
+
+poetry run python main.py
 ```
 
 ## Onebot V12连接支持情况：
