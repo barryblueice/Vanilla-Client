@@ -94,7 +94,7 @@ poetry run python main.py
 |Action|实现情况|备注|
 |:-:|:-:|:-:|
 |get_self_info|✔️||
-|get_user_info|✔️|由于上游端限制，bot在群聊中会通过监听消息的方式收集群成员的wxid和username并保存为member.db。</br>在私聊事件中，若被触发wxid不存在于json文件，则username默认返回wxid。</br>你可以通过修改db文件的方式进行username的自定义。</br>通过数据库解包方式进行用户Action的实现暂不考虑支持。|
+|get_user_info|✔️|由于上游端限制，bot在群聊中会通过监听消息的方式收集群成员的wxid和username并保存为member.db。</br>在私聊事件中，若被触发wxid不存在于member.db，则username默认返回wxid。</br>你可以通过修改db文件的方式进行username的自定义。</br>通过数据库解包方式进行用户Action的实现暂不考虑支持。|
 |get_friend_list|⭕|后续可能更新|
 
 **Message Action:**
