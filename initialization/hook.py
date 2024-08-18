@@ -66,7 +66,7 @@ def hook_initial(target_wx_version,hookport):
         logger.info("Hook作业完成，正在检测Hook是否生效……")
 
         try:
-            url = f"http://{connect_url}:{hookport}/api/?type=0"
+            url = f"http://{connect_url}:{hookport}/api/userInfo"
             payload = {}
             headers = {}
             requests.request("POST", url, headers=headers, data=payload)
@@ -75,7 +75,7 @@ def hook_initial(target_wx_version,hookport):
 
         while True:
             try:
-                url = f"http://{connect_url}:{hookport}/api/?type=0"
+                url = f"http://{connect_url}:{hookport}/api/userInfo"
                 payload = {}
                 headers = {}
                 requests.request("POST", url, headers=headers, data=payload)
@@ -91,13 +91,19 @@ def hook_initial(target_wx_version,hookport):
         
     logger.info('正在检测登陆状态')
     while True:
-        url = f"http://{connect_url}:{hookport}/api/checkLogin"
-        response = requests.request("POST", url, headers=headers, data=payload).json()
-        if response['code'] != 1:
-            logger.error('请登录微信以进行下一步操作！')
-        else:
-            logger.success('微信已登录！')
-            break
+        try:
+            url = f"http://{connect_url}:{hookport}/api/checkLogin"
+            response = requests.request("POST", url, headers=headers, data=payload).json()
+            if response['code'] != 1:
+                logger.error('请登录微信以进行下一步操作！')
+            elif response["msg"] == "success":
+                logger.success('微信已登录！')
+                break
+            else:
+                logger.success('微信已登录！')
+                break
+        except Exception as e:
+            logger.error(f'错误：{e}')
         time.sleep(1)
 
 def hookmsg_server_initial(hookport,hookmsgport):
