@@ -11,6 +11,7 @@ dll/config.ini
 logs/
 data/
 data*/
+.vscode/
 __pycache__/
 
 initialization/__pycache__/
