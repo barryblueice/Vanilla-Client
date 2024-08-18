@@ -607,7 +607,7 @@ class ActionHandle:
         logger.info(f"事件触发: GetUserInfoAction({user_id})")
         try:
             try:
-                await self.member_find_by_user_id(user_id=user_id)
+                user_name = await self.member_find_by_user_id(user_id=user_id)
             except:
                 user_name = user_id
             status = 'ok'
@@ -721,7 +721,7 @@ class ActionHandle:
             self,
             echo: str
     ):
-        logger.info(f"事件触发: UnsupportedMessageAction，不支持的Action")  
+        logger.warning(f"事件触发: UnsupportedMessageAction，不支持的Action")  
         await MessageAction.UnsupportedMessageAction(
             echo
         )
