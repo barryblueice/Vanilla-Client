@@ -17,6 +17,7 @@ websockets = "^12.0"
 wmi = "^1.5.1"
 requests = "^2.32.3"
 asyncio = "^3.4.3"
+pycryptodome = "^3.20.0"
 
 
 [[tool.poetry.source]]
