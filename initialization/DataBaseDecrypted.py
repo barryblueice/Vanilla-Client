@@ -194,6 +194,27 @@ class DataBaseDecrypted:
     def DataBaseDecryptedProcess(
         self,
         wxid: str):
+            
+        try:
+            TargetDBPath = os.path.join(TargetFilePath,wxid,'Msg')
+            ChatRoomUserDB = os.path.join(TargetDBPath,'ChatRoomUser.db')
+            password = self.GetDBKey(self)
+            DecryptedChatRoomUserDB = os.path.join(datapath,'ChatRoomUserDecrypted.db')
+            self.decrypt(password, ChatRoomUserDB, DecryptedChatRoomUserDB)
+            self.WriteMemberInfo(
+                self,
+                DecryptedChatRoomUserDB=DecryptedChatRoomUserDB,
+                TargetMemberDB=TargetMemberDB,
+                TargetGroupDB=TargetGroupDB)
+            logger.success('数据库更新成功：解密数据库')
+        except Exception as e:
+            logger.warning(f'数据库更新失败：{e}，部分功能将无法使用。')
+        finally:
+            try:
+                os.remove(DecryptedChatRoomUserDB)
+            except:
+                pass
+            
         try:
             url = f"http://{connect_url}:{PORT}/api/getContactList"
             payload = {}
@@ -217,23 +238,3 @@ class DataBaseDecrypted:
             
         except Exception as e:
             logger.warning(logger.info(f'数据库更新失败：{e}，部分功能将无法使用。'))
-            
-        try:
-            TargetDBPath = os.path.join(TargetFilePath,wxid,'Msg')
-            ChatRoomUserDB = os.path.join(TargetDBPath,'ChatRoomUser.db')
-            password = self.GetDBKey(self)
-            DecryptedChatRoomUserDB = os.path.join(datapath,'ChatRoomUserDecrypted.db')
-            self.decrypt(password, ChatRoomUserDB, DecryptedChatRoomUserDB)
-            self.WriteMemberInfo(
-                self,
-                DecryptedChatRoomUserDB=DecryptedChatRoomUserDB,
-                TargetMemberDB=TargetMemberDB,
-                TargetGroupDB=TargetGroupDB)
-            logger.success('数据库更新成功：解密数据库')
-        except Exception as e:
-            logger.warning(f'数据库更新失败：{e}，部分功能将无法使用。')
-        finally:
-            try:
-                os.remove(DecryptedChatRoomUserDB)
-            except:
-                pass

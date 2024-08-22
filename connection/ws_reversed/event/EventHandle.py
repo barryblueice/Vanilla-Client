@@ -36,11 +36,13 @@ class EventHandle:
         conn = sqlite3.connect(MemberDB)
         try:
             cursor = conn.cursor()
-            cursor.execute("""
-                UPDATE Users
-                SET username = ?
-                WHERE userid = ?;
-            """, (user_name, user_id))
+            cursor.execute("SELECT EXISTS(SELECT 1 FROM Users WHERE userid=?)", (user_id,))
+            user_exists = cursor.fetchone()[0]
+
+            if not user_exists:
+                cursor.execute("INSERT INTO Users (userid, username) VALUES (?, ?)", (user_id, user_name))
+            else:
+                pass
             conn.commit()
         finally:
             conn.close()
