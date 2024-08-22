@@ -68,8 +68,6 @@ class UserAction:
     async def GetFriendList(
         status: str,
         retcode: int,
-        user_id: str,
-        user_name: str,
         message: str,
         echo: str,
         data: list

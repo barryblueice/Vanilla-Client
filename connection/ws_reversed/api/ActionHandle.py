@@ -28,6 +28,9 @@ audio_path = os.path.join(data_path,'audio')
 video_path = os.path.join(data_path,'video')
 file_path = os.path.join(data_path,'file')
 
+connect_url = os.getenv("connect_url")
+PORT = os.getenv("PORT")
+
 loop = asyncio.get_event_loop()
 
 FILE_TYPES = {
@@ -104,7 +107,7 @@ class ActionHandle:
             conn.close()
     
     async def MessageActionHandle(self,msg):
-            
+        # print (msg)
         match msg["action"]:
 
             case "send_message":
@@ -114,6 +117,7 @@ class ActionHandle:
                     MsgTextList = ''
                     MsgImageList = []
                     MsgFileList = []
+                    MsgEmojiList = []
                     echo = msg["echo"]
                     
                     try:
@@ -131,6 +135,8 @@ class ActionHandle:
                                     MsgTextList += i['data']['text']
                                 case "image":
                                     MsgImageList.append(i['data']['file_id'])
+                                case "file":
+                                    MsgFileList.append(i['data']['file_id'])
                                 case _:
                                     MsgImageList.append(i['data']['file_id'])
                     except:
@@ -146,6 +152,17 @@ class ActionHandle:
                             for i in os.listdir(img_path):
                                 if str(i).startswith(m):
                                     await self.PrivateImageAction(
+                                        user_id=user_id,
+                                        img=os.path.join(img_path,i),
+                                        echo=echo
+                                    )
+                                    break
+                                
+                    if MsgEmojiList != []:
+                        for m in MsgEmojiList:
+                            for i in os.listdir(img_path):
+                                if str(i).startswith(m):
+                                    await self.PrivateEmojiAction(
                                         user_id=user_id,
                                         img=os.path.join(img_path,i),
                                         echo=echo
@@ -190,6 +207,7 @@ class ActionHandle:
                     MsgTextList = ''
                     MsgImageList = []
                     MsgFileList = []
+                    MsgEmojiList = []
                     for i in list(msg["params"]["message"]):
                         match i["type"]:
                             case "mention":
@@ -204,6 +222,8 @@ class ActionHandle:
                                 MsgTextList += i['data']['text']
                             case "image":
                                 MsgImageList.append(i['data']['file_id'])
+                            case "file":
+                                MsgFileList.append(i['data']['file_id'])
                             case _:
                                 MsgImageList.append(i['data']['file_id'])
                     
@@ -223,6 +243,17 @@ class ActionHandle:
                             for i in os.listdir(img_path):
                                 if str(i).startswith(m):
                                     await self.GroupImageAction(
+                                        group_id=group_id,
+                                        img=os.path.join(img_path,i),
+                                        echo=echo
+                                    )
+                                    break
+                                
+                    if MsgEmojiList != []:
+                        for m in MsgEmojiList:
+                            for i in os.listdir(img_path):
+                                if str(i).startswith(m):
+                                    await self.GroupEmojiAction(
                                         group_id=group_id,
                                         img=os.path.join(img_path,i),
                                         echo=echo
@@ -297,7 +328,19 @@ class ActionHandle:
                 await self.GetSelfInfoAction(
                     echo=echo
                 )
-                
+            
+            case "get_friend_list":
+                echo = msg["echo"]
+                await self.GetFriendListAction(
+                    echo=echo
+                )
+            
+            # case "wx.link":
+            #     echo = msg["echo"]
+                # await self.GetFriendListAction(
+                #     echo=echo
+                # )
+            
             case _:
                 echo = msg["echo"]
                 await self.UnsupportedMessageAction(
@@ -505,6 +548,100 @@ class ActionHandle:
             echo=echo
         )
 
+    async def PrivateEmojiAction(
+            self,
+            user_id: str,
+            img: str,
+            echo: str,
+        ):
+        logger.info(f"向好友 {user_id} 发送私聊Emoji消息")
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        payload = json.dumps({
+            "wxid": user_id,
+            "filePath": img
+            })
+        response = requests.request("POST", f"{self.ActionUrl}/api/sendCustomEmotion", headers=headers, data=payload).json()
+        try:
+            if (response['code'] == 1) or (response["msg"] == "success"):
+                status = 'ok'
+                retcode = 0
+                msgId = str(int(time.time()))
+                createdtime = time.time()
+                message = ""
+                echo = echo
+            else:
+                status = 'failed'
+                retcode = 10001
+                msgId = str(0)
+                createdtime = time.time()
+                message = response["msg"]
+                echo = echo
+        except:
+            status = 'failed'
+            retcode = 10001
+            msgId = str(0)
+            createdtime = time.time()
+            message = response["msg"]
+            echo = echo
+
+        await MessageAction.MessageSentAction(
+            status=status,
+            retcode=retcode,
+            msgId=msgId,
+            createdtime=createdtime,
+            message=message,
+            echo=echo
+        )
+
+    async def GroupEmojiAction(
+            self,
+            group_id: str,
+            img: str,
+            echo: str,
+        ):
+        logger.info(f"向群聊 {group_id} 发送Emoji消息")
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        payload = json.dumps({
+            "wxid": group_id,
+            "filePath": img
+            })
+        response = requests.request("POST", f"{self.ActionUrl}/api/sendFileMsg", headers=headers, data=payload).json()
+        try:
+            if (response['code'] == 1) or (response["msg"] == "success"):
+                status = 'ok'
+                retcode = 0
+                msgId = str(int(time.time()))
+                createdtime = time.time()
+                message = ""
+                echo = echo
+            else:
+                status = 'failed'
+                retcode = 10001
+                msgId = str(0)
+                createdtime = time.time()
+                message = response["msg"]
+                echo = echo
+        except:
+            status = 'failed'
+            retcode = 10001
+            msgId = str(0)
+            createdtime = time.time()
+            message = response["msg"]
+            echo = echo
+
+        await MessageAction.MessageSentAction(
+            status=status,
+            retcode=retcode,
+            msgId=msgId,
+            createdtime=createdtime,
+            message=message,
+            echo=echo
+        )
+
     async def PrivateFileAction(
             self,
             user_id: str,
@@ -519,7 +656,7 @@ class ActionHandle:
             "wxid": user_id,
             "filePath": file
             })
-        response = requests.request("POST", f"{self.ActionUrl}/api/sendImagesMsg", headers=headers, data=payload).json()
+        response = requests.request("POST", f"{self.ActionUrl}/api/sendFileMsg", headers=headers, data=payload).json()
         try:
             if (response['code'] == 1) or (response["msg"] == "success"):
                 status = 'ok'
@@ -566,7 +703,7 @@ class ActionHandle:
             "wxid": group_id,
             "filePath": file
             })
-        response = requests.request("POST", f"{self.ActionUrl}/api/sendImagesMsg", headers=headers, data=payload).json()
+        response = requests.request("POST", f"{self.ActionUrl}/api/sendFileMsg", headers=headers, data=payload).json()
         try:
             if (response['code'] == 1) or (response["msg"] == "success"):
                 status = 'ok'
@@ -668,7 +805,7 @@ class ActionHandle:
             case "data":
                 if type(data) != bytes:
                     data = base64.b64decode(data)
-                with open(os.path.join(img_path,f"{file_id}.png"),'wb') as file_obj:
+                with open(os.path.join(img_path,f"{file_id}.gif"),'wb') as file_obj:
                     file_obj.write(data)
             case _:
                 raise ValueError("Type Not Supported")
@@ -716,7 +853,45 @@ class ActionHandle:
             message=message,
             echo=echo
             )
+
+    async def GetFriendListAction(
+                self,
+                echo: str
+        ):
+        member_list = []
+        try:
+            url = f"http://{connect_url}:{PORT}/api/getContactList"
+            payload = {}
+            headers = {}
+            response = requests.request("POST", url, headers=headers, data=payload).json()
+            for i in response['data']:
+                if str(i['wxid']).startswith('wxid_'):
+                    member_list.append({
+                        "user_id": i['wxid'],
+                        "user_name": i['nickname']
+                    })
+            status = 'ok'
+            retcode = 0
+            message = ''
+            
+        except Exception as e:
+            
+            self_id = '0',
+            self_name = '0'
+            status = 'failed'
+            retcode = 10001
+            message = f"Error: {e}"
         
+        await UserAction.GetFriendList(
+            status=status,
+            retcode=retcode,
+            self_id=self_id,
+            self_name=self_name,
+            message=message,
+            echo=echo,
+            data=member_list
+            )
+    
     async def UnsupportedMessageAction(
             self,
             echo: str

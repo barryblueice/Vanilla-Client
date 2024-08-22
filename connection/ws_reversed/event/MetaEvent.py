@@ -32,7 +32,7 @@ class MetaEvent:
         except Exception as e:
             logger.error(f'MetaEvent.connect元事件发送失败：{e}')
             
-    async def status_update(client, self_id: str):
+    async def status_update(client, self_id: str, online: bool):
         try:
             message = json.dumps({
                 "id": str(uuid.uuid4()),
@@ -48,12 +48,12 @@ class MetaEvent:
                                 "platform": "wechat",
                                 "user_id": self_id
                             },
-                            "online": True
+                            "online": online
                         }
                     ]
                 }
             })
-            
+            # print (message)
             await client.append_requests(message)
             logger.success('已发送MetaEvent.status_update元事件')
         except Exception as e:

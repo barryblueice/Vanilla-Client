@@ -25,11 +25,14 @@ data_path = {os.path.join(os.getcwd(),'data')}
 # 微信数据路径（请使用绝对路径，范例：C:\\<路径>\\WeChat Files或C:\<路径>\WeChat Files。路径可自行在微信设置中查询，如果为空则部分功能可能受到限制）
 wx_data_path = 
 
+# websocket文件缓冲大小。默认为4，单位MB，不能为0或空。
+ws_max_size = 4
+
 # 微信版本号（请勿修改！）
 wx_version = 3.9.8.25
 
 # Vanilla Client版本号（请勿修改！）
-V_version = 1.2.1'''
+V_version = 1.3.1'''
 
 def initial_env():
     try:
@@ -43,6 +46,14 @@ def initial_env():
         logger.error(f"错误：{e}")
         time.sleep(5)
         sys.exit()
+        
+def check_env():
+    for i in ['connect_url','PORT','HOOK_PORT','onebot_ip','onebot_port','data_path','ws_max_size','wx_version','V_version']:
+        _env=os.getenv(i)
+        if (str(_env).replace(' ','') == '') or (_env == None):
+            logger.error(f"错误：变量“{i}”为空，请修改环境变量文件后重启Vallina Client！")
+            time.sleep(5)
+            sys.exit()
         
 def makememberdb():
     try:
@@ -106,6 +117,7 @@ def initial_file_data(data_path: str):
 today = (datetime.today()).strftime("%Y-%m-%d")
 logger.add(f"{os.path.join(os.getcwd(),'logs',today)}.log")
 initial_env()
+check_env()
 data_path = str(os.getenv("data_path"))
 # member_path = os.path.join(data_path,'member.json')
 initial_member_data(data_path)

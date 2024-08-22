@@ -5,6 +5,9 @@
     <a href="https://github.com/barryblueice/Vanilla-Client/blob/main/LICENSE"><img src="https://img.shields.io/github/license/barryblueice/Vanilla-Client" alt="License"></a>
 </p>
 
+> [!CAUTION]\
+> **请不要在 QQ 官方群聊和任何影响力较大的简中互联网平台（包括但不限于: 哔哩哔哩，微博，知乎，抖音等）发布和讨论*任何*与本Client存在相关性的信息！**
+
 ## 简介
 
 [wxhelper](https://github.com/ttttupup/wxhelper)的OneBot V12客户端实现。
@@ -48,6 +51,21 @@ poetry install
 poetry run python main.py
 ```
 
+## .env环境配置详解：
+
+|参数名|解释|范例/默认值|备注
+|:-:|:-:|:-:|:-:|
+|connect_url|目标WeChat.exe被hook后的地址|127.0.0.1||
+|PORT|目标WeChat.exe被hook后的端口|19088||
+|HOOK_PORT|HookMsg接收端口|8000||
+|onebot_ip|onebot链接地址|127.0.0.1|暂时仅支持反向连接和ip连接。|
+|onebot_port|onebot链接端口号|8080|暂时仅支持反向连接。|
+|data_path|运行数据路径|C:\\\data或C:\\data|请使用绝对路径。|
+|wx_data_path|微信数据路径|C:\\<路径>\\WeChat Files或C:\<路径>\WeChat Files|请使用绝对路径。</br>路径可自行在微信设置中查询，如果为空则部分功能可能受到限制。|
+|ws_max_size|websocket文件缓冲大小|4|单位MB，**不能为0或空。**|
+|wx_version|微信版本号|3.9.8.25|请勿修改！|
+|V_version|Vanilla Client版本号|1.3.1|请勿修改！|
+
 ## Onebot V12连接支持情况：
 
 - [ ] HTTP
@@ -74,7 +92,7 @@ poetry run python main.py
 **Notice事件：**
 |Event|实现情况|备注|
 |:-:|:-:|:-:|
-|notice.friend_increase|⭕|后续可能更新|
+|notice.friend_increase|❌|后续可能更新|
 |notice.friend_decrease|⭕|后续可能更新|
 |notice.private_message_delete|✔️||
 |notice.group_member_increase|⭕|后续可能更新|
@@ -94,13 +112,13 @@ poetry run python main.py
 |Action|实现情况|备注|
 |:-:|:-:|:-:|
 |get_self_info|✔️||
-|get_user_info|✔️|由于上游端限制，bot在群聊中会通过监听消息的方式收集群成员的wxid和username并保存为member.db。</br>在私聊事件中，若被触发wxid不存在于member.db，则username默认返回wxid。</br>你可以通过修改db文件的方式进行username的自定义。</br>通过数据库解包方式进行用户Action的实现暂不考虑支持。|
-|get_friend_list|⭕|后续可能更新|
+|get_user_info|✔️|由于上游端限制，bot在群聊中会通过监听消息的方式收集群成员的wxid和username并保存为member.db。</br>在私聊事件中，若被触发wxid不存在于member.db，则username默认返回wxid。</br>你可以通过修改db文件的方式进行username的自定义。|
+|get_friend_list|✔️||
 
 **Message Action:**
 |Action|实现情况|备注|
 |:-:|:-:|:-:|
-|send_message|✔️/⭕|群聊/个人消息均支持。</br>目前仅支持发送图片和文本，文件发送仍在测试阶段，表情发送后续会支持。|
+|send_message|✔️/⭕|群聊/个人消息均支持。</br>目前仅支持发送静态图片和文本。</br>由于上游端支持问题，gif动图默认以静态图片形式发送。|
 |delete_message|❌|因上游端问题无法实现|
 
 **文件Action：**
@@ -137,8 +155,12 @@ poetry run python main.py
 
 |Event|实现情况|备注|
 |:-:|:-:|:-:|
-|notice.get_private_poke|✔️|参考自[ComWeChatBotClient](https://justundertaker.github.io/ComWeChatBotClient/event/notice.html)，用法相同。|
-|notice.wx.get_group_poke|✔️|参考自[ComWeChatBotClient](https://justundertaker.github.io/ComWeChatBotClient/event/notice.html)，用法相同。|
+|notice.get_private_poke|✔️|参考自[ComWeChatBotClient](https://justundertaker.github.io/ComWeChatBotClient/event/notice.html#%E7%A7%81%E8%81%8A%E6%8B%8D%E4%B8%80%E6%8B%8D%E9%80%9A%E7%9F%A5)，用法相同。|
+|notice.wx.get_group_poke|✔️|参考自[ComWeChatBotClient](https://justundertaker.github.io/ComWeChatBotClient/event/notice.html#%E7%BE%A4%E8%81%8A%E6%8B%8D%E4%B8%80%E6%8B%8D%E9%80%9A%E7%9F%A5)，用法相同。|
+
+**扩展Action：**
+|Action|实现情况|备注|
+|:-:|:-:|:-:|
 
 ## 其他实现情况
 
@@ -146,3 +168,4 @@ poetry run python main.py
 |:-:|:-:|:-:|
 |OneBot V11支持|❌|由于wxid的性质与OneBot V11标准冲突，</br>（在OneBot V11中，user_id要求为int64），故不提供支持。|
 |多开支持|❌|由于某些特殊原因，不提供支持。|
+|他人被at检测|❌|上游端暂未实现，所以暂不考虑支持|

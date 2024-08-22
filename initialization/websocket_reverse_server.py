@@ -1,6 +1,6 @@
 import asyncio
 import websockets
-import os
+import os,time
 from datetime import datetime
 from loguru import logger
 import ujson as json
@@ -14,16 +14,17 @@ class OneBotWebSocketReverseServer:
     log_path = os.path.join(os.getcwd(), 'logs', f"{today}.log")
     logger.add(log_path)
 
-    def __init__(self, host: str, port: int, path: str = "/onebot/v12/ws", max_concurrent_tasks: int = 10):
+    def __init__(self, host: str, port: int, path: str = "/onebot/v12/ws"):
         self.uri = f"ws://{host}:{port}{path}"
         self.message_queue = asyncio.Queue()
         self.websocket = None
-        self.semaphore = asyncio.Semaphore(max_concurrent_tasks)
-
+        self.max_size = (int(os.getenv('ws_max_size')) * 1024 * 1024
+)
     async def connect(self):
+        # online_status = True
         while True:
             try:
-                async with websockets.connect(self.uri) as websocket:
+                async with websockets.connect(self.uri,max_size=self.max_size) as websocket:
                     self.websocket = websocket
                     logger.success(f'已连接到反向服务器: {self.uri}')
                     self_information = GetSelfInfo()
@@ -31,22 +32,30 @@ class OneBotWebSocketReverseServer:
                     _DataBaseDecrypted = DataBaseDecrypted
                     _DataBaseDecrypted.DataBaseDecryptedProcess(self=_DataBaseDecrypted,wxid=self_information[1])
                     await MetaEvent.MetaEvent.connect(self)
-                    await MetaEvent.MetaEvent.status_update(self, self_information[1])
+                    # if not online_status:
+                    #     await MetaEvent.MetaEvent.status_update(self, self_information[1],online=online_status)
+                    #     online_status = True
+                    # await MetaEvent.MetaEvent.status_update(self, self_information[1],online=online_status)
+                    await MetaEvent.MetaEvent.status_update(self, self_information[1],online=False)
+                    await MetaEvent.MetaEvent.status_update(self, self_information[1],online=True)
                     consumer_task = asyncio.create_task(self.listen(websocket))
                     producer_task = asyncio.create_task(self.send_requests())
                     await asyncio.gather(consumer_task, producer_task)
             except websockets.ConnectionClosedError as e:
+                online_status = False
                 logger.error(f"WebSocket连接错误，代码: {e.code}, 原因: {e.reason}")
                 if e.code == 1012:
                     logger.warning("收到服务器重启请求，等待重新连接...")
                 await asyncio.sleep(5)
             except Exception as e:
+                online_status = False
                 logger.error(f"反向服务器连接错误: {e}")
                 await asyncio.sleep(5)
 
     async def listen(self, websocket):
         try:
-            async for message in websocket:
+            while True:
+                message = await websocket.recv()
                 asyncio.create_task(self.handle_message(message))
         except websockets.ConnectionClosed as e:
             logger.warning(f"反向服务器连接关闭 {e.code} - {e.reason}")
@@ -55,9 +64,8 @@ class OneBotWebSocketReverseServer:
             logger.error(f"监听服务器消息时出现错误：{e}")
 
     async def handle_message(self, message):
-        async with self.semaphore:
-            # print (message)
-            await self.process_message(message)
+        # print (message)
+        await self.process_message(message)
 
     async def process_message(self, message):
         try:
